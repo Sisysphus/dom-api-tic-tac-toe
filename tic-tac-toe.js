@@ -10,7 +10,7 @@ function checkGameStatus() {
             break;
         }
     }
-
+ // check columns
     for (let i = 0; i < 3; i += 1) {
         if (squareValues[i] !== "" && squareValues[i] === squareValues[i + 3] && squareValues[i + 3] === squareValues[i + 6]) {
             gameStatus = squareValues[i];
@@ -26,18 +26,9 @@ function checkGameStatus() {
         gameStatus = squareValues[2];
     }
 
-
-
-    function loadedGameState() {
-        const savedState = window.localStorage.getItem(key);
-        if (savedState === null) return;
-
-        const state = JSON.parse(savedState);
-        currentPlayerSymbol = state.currentPlayerSymbol;
-        squareValues = state.squareValues;
-        gameStatus = state.gameStatus;
-    }
-
+if (gameStatus !== '') {
+    document.getElementById('game-status-message').innerHTML = `Winner : ${gameStatus.toUpperCase()}`
+}
 
 
     let boardIsFild = true;
@@ -56,11 +47,9 @@ function checkGameStatus() {
 
     if (gameStatus !== '') {
         document
-            .getElementById("game-status")
+            .getElementById("game-status-message")
             .innerHTML = `Winner: ${gameStatus.toUpperCase()}`;
-        document.getElementById("new-game").removeAttribute("disabled");
-        document.getElementById("give-up")
-            .disabled = true;
+        document.getElementById("new-game").disabled = false;
     }
 }
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -89,10 +78,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
             }
             checkGameStatus();
         });
-    const button = document.getElementById("new-game");
-    button.addEventListener('click', (event) => {
+
+
+  document.getElementById('new-game').addEventListener('click', () => {
         gameStatus = '';
-        document.getElementById("game-status")
+        document.getElementById("game-status-message")
             .innerHTML = "";
         for (let i = 0; i < 9; i++) {
             document.getElementById(`square-${i}`)
@@ -102,21 +92,18 @@ window.addEventListener('DOMContentLoaded', (event) => {
         document.getElementById("new-game")
             .disabled = true;
         squareValues = ['', '', '', '', '', '', '', '', ''];
-        currentPlayerSymbol = 'x';
-        document.getElementById("give-up")
-            .disabled = false;
 
     });
 
     document.getElementById("give-up")
-        .addEventListener("click", event => {
+        .addEventListener("click", (event) => {
             if (currentPlayerSymbol === "x") {
                 gameStatus = "o";
             } else {
                 gameStatus = "x";
             }
             document
-                .getElementById("game-status")
+                .getElementById("game-status-message")
                 .innerHTML = `Winner: ${gameStatus.toUpperCase()}`;
 
             document.getElementById("give-up")
@@ -124,6 +111,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
             document.getElementById("new-game")
                 .disabled = false;
+                
+        saveGameState();
         });
 
 });
